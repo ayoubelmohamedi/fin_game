@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
@@ -48,8 +47,13 @@ export default function Header() {
                 ← All Games
               </Link>
             )}
-            <div className="px-4 py-2 border-2 border-black bg-black text-white text-xs font-bold" style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.05em' }}>
-              XBITION 2026
+            <div className="flex items-center px-2 py-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/xibition-logo.svg"
+                alt="X-ibition UM6P Student Club Fair"
+                className="h-10 w-auto"
+              />
             </div>
           </nav>
         </div>

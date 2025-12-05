@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { games } from "@/data/gameData";
 
 export default function Home() {
@@ -12,6 +13,27 @@ export default function Home() {
           <p className="text-xs font-bold tracking-widest" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             SCHOOL OF HOSPITALITY & BUSINESS MANAGEMENT
           </p>
+        </div>
+
+        <div className="relative flex justify-center mb-8">
+          {/* Soft brand-colored shades behind the logo */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 blur-3xl"
+            style={{
+              background:
+                "radial-gradient(circle at 20% 30%, rgba(106,120,255,0.15), transparent 40%), radial-gradient(circle at 80% 70%, rgba(106,120,255,0.18), transparent 42%)",
+              transform: "scale(1.05)",
+            }}
+          />
+          <Image
+            src="/xibition-logo.svg"
+            alt="X-ibition UM6P Student Club Fair 5th Edition"
+            width={900}
+            height={230}
+            className="w-full max-w-4xl h-auto"
+            priority
+          />
         </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 230" role="img" aria-labelledby="title desc">
+  <title id="title">X-ibition UM6P Student Club Fair 5th Edition</title>
+  <desc id="desc">Event logo with stylized X mark and the text X-ibition UM6P Student Club Fair 5th Edition</desc>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6a78ff" />
+      <stop offset="100%" stop-color="#5a68f2" />
+    </linearGradient>
+  </defs>
+  <!-- Stylized X -->
+  <g transform="translate(10,10)">
+    <path d="M60 0h80c0 110-100 200-200 200H0V120c80 0 120-60 120-120Z" fill="url(#g)" />
+    <path d="M60 200h80c0-110-100-200-200-200H0v80c80 0 120 60 120 120Z" fill="url(#g)" />
+  </g>
+  <!-- Text block -->
+  <g transform="translate(230,45)" fill="#5f6ef9" font-family="'DM Sans', 'Inter', Arial, sans-serif" font-weight="700">
+    <text x="0" y="70" font-size="140">-ibition</text>
+    <text x="0" y="120" font-size="28" letter-spacing="6" fill="#444">UM6P STUDENT CLUB FAIR</text>
+    <text x="520" y="160" font-size="44">5<tspan dy="-12" font-size="18">th</tspan> EDITION</text>
+  </g>
+</svg>
