@@ -32,7 +32,7 @@ export default function Header() {
               <img
                 src="/hin-logo.png"
                 alt="HIN - Hospitality Innovators Nexus"
-                className="h-35 w-auto"
+                className="h-20 md:h-35 w-auto"
               />
             </Link>
           </div>
