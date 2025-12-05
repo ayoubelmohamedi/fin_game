@@ -103,9 +103,9 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-600 text-sm">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-xs">
-              FIN
+              HIN
             </div>
-            <span style={{ fontFamily: "'DM Sans', sans-serif" }}>FIN Club @ SHBM, UM6P</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif" }}>HINClub @ SHBM, UM6P</span>
           </div>
           <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Made for Xbition 2026
