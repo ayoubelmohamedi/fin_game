@@ -30,9 +30,9 @@ export default function Header() {
             <Link href="/" className="flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/hin-logo.svg"
+                src="/hin-logo.png"
                 alt="HIN - Hospitality Innovators Nexus"
-                className="h-12 w-auto"
+                className="h-35 w-auto"
               />
             </Link>
           </div>
