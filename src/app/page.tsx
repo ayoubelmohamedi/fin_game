@@ -5,40 +5,36 @@ import { games } from "@/data/gameData";
 
 export default function Home() {
   return (
-    <div className="min-h-screen px-4 py-8 sm:py-12">
+    <div className="min-h-screen px-4 py-12 sm:py-16">
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto text-center mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 text-sm mb-6">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-          School of Hospitality & Business Management
+      <section className="max-w-6xl mx-auto text-center mb-16 sm:mb-20">
+        <div className="inline-block mb-6 px-6 py-3 border-2 border-black bg-white">
+          <p className="text-xs font-bold tracking-widest" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            SCHOOL OF HOSPITALITY & BUSINESS MANAGEMENT
+          </p>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            FIN Club
-          </span>{" "}
-          Xbition 2026
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Hospitality Innovators Nexus
         </h1>
 
-        <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-8">
-          Explore our collection of interactive games combining{" "}
-          <span className="text-indigo-400">hospitality</span> and{" "}
-          <span className="text-purple-400">technology</span>. Perfect for team
-          building and fun events!
+        <h2 className="text-2xl sm:text-3xl font-bold text-black mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Xbition 2026
+        </h2>
+
+        <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          Elevating hospitality through interactive experiences. Engage, compete, and celebrate innovation.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300">
-            <span>🎮</span>
-            <span>{games.length} Games</span>
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="px-5 py-3 border-2 border-black bg-white font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            {games.length} Games
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300">
-            <span>👥</span>
-            <span>Multiplayer</span>
+          <div className="px-5 py-3 border-2 border-black bg-white font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Multiplayer
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-300">
-            <span>⚡</span>
-            <span>Interactive</span>
+          <div className="px-5 py-3 border-2 border-black bg-white font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Interactive
           </div>
         </div>
       </section>
@@ -46,57 +42,34 @@ export default function Home() {
       {/* Games Grid */}
       <section className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game, index) => (
-            <Link
-              key={game.id}
-              href={`/game/${game.id}`}
-              className="game-card group relative overflow-hidden p-6 flex flex-col"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {/* Background gradient */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-              ></div>
+          {games.map((game) => (
+            <Link key={game.id} href={`/game/${game.id}`}>
+              <div className="game-card p-8 flex flex-col h-full cursor-pointer">
+                {/* Icon placeholder - using black square instead of emoji */}
+                <div className="mb-6 text-4xl">■</div>
 
-              {/* Icon */}
-              <div className="relative mb-4">
-                <div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${game.color} flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                >
-                  {game.icon}
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="text-xs font-bold tracking-widest text-gray-600 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    {game.subtitle}
+                  </div>
+                  <h3 className="text-2xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {game.title}
+                  </h3>
+                  <p className="text-gray-700 text-sm mb-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    {game.description}
+                  </p>
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="relative flex-1">
-                <div className="text-xs text-white/40 uppercase tracking-wider mb-1">
-                  {game.subtitle}
+                {/* Footer */}
+                <div className="flex items-center justify-between mt-auto pt-4 border-t-2 border-black">
+                  <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    {game.players}
+                  </span>
+                  <span className="text-sm font-bold text-black" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    PLAY →
+                  </span>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">
-                  {game.title}
-                </h3>
-                <p className="text-white/60 text-sm mb-4">{game.description}</p>
-              </div>
-
-              {/* Footer */}
-              <div className="relative flex items-center justify-between mt-auto pt-4 border-t border-white/10">
-                <span className="text-xs text-white/40">{game.players}</span>
-                <span className="flex items-center gap-1 text-indigo-400 text-sm font-medium group-hover:gap-2 transition-all">
-                  Play Now
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </span>
               </div>
             </Link>
           ))}
@@ -104,15 +77,17 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-white/40 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs">
+      <footer className="max-w-6xl mx-auto mt-20 pt-8 border-t-2 border-black">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-gray-600 text-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-bold text-xs">
               FIN
             </div>
-            <span>FIN Club @ SHBM, UM6P</span>
+            <span style={{ fontFamily: "'DM Sans', sans-serif" }}>FIN Club @ SHBM, UM6P</span>
           </div>
-          <div>Made with ❤️ for Xbition 2026</div>
+          <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Made for Xbition 2026
+          </div>
         </div>
       </footer>
     </div>

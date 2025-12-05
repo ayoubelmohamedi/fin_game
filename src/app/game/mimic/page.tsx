@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { mimicWords } from "@/data/gameData";
 import GameControls from "@/components/GameControls";
 import ScoreDisplay from "@/components/ScoreDisplay";
-import Confetti from "@/components/Confetti";
 
 export default function MimicGame() {
   const router = useRouter();
@@ -14,7 +13,6 @@ export default function MimicGame() {
   );
   const [score, setScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [usedWords, setUsedWords] = useState<string[]>([]);
 
   const getNewWord = useCallback(() => {
@@ -28,8 +26,6 @@ export default function MimicGame() {
 
   const handleCorrect = () => {
     setScore((s) => s + 1);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 100);
     nextWord();
   };
 
@@ -51,19 +47,16 @@ export default function MimicGame() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 flex flex-col items-center justify-center">
-      <Confetti active={showConfetti} />
-
+    <div className="min-h-screen px-4 py-12 flex flex-col items-center justify-center">
       {/* Game Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm mb-4">
-          <span>🎭</span>
-          <span>Hospitality × Tech</span>
+        <div className="inline-block px-4 py-2 border-2 border-black bg-white text-xs font-bold tracking-widest mb-4">
+          HOSPITALITY × TECH
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           Mimic the Word
         </h1>
-        <p className="text-white/60">
+        <p className="text-gray-600">
           Act it out without speaking! Can your team guess?
         </p>
       </div>
@@ -78,8 +71,8 @@ export default function MimicGame() {
         <div className="game-card p-8 text-center">
           {!revealed ? (
             <>
-              <div className="text-6xl mb-6 animate-bounce">🤫</div>
-              <p className="text-white/60 mb-6">
+              <div className="text-6xl mb-6">■</div>
+              <p className="text-gray-600 mb-6">
                 Only the actor should see the word!
               </p>
               <button
@@ -91,51 +84,25 @@ export default function MimicGame() {
             </>
           ) : (
             <>
-              <div className="text-sm text-white/40 uppercase tracking-wider mb-2">
+              <div className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">
                 Act this out
               </div>
-              <div className="text-3xl sm:text-4xl font-bold text-white mb-8 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-3xl sm:text-4xl font-bold text-black mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {currentWord}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={handleCorrect}
-                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-emerald-500/30"
+                  className="px-6 py-3 border-2 border-black bg-black text-white font-medium hover:bg-white hover:text-black transition-all"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Team Got It!
+                  ✓ Team Got It!
                 </button>
                 <button
                   onClick={handleSkip}
-                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all"
+                  className="px-6 py-3 border-2 border-black bg-white text-black font-medium hover:bg-black hover:text-white transition-all"
                 >
-                  Skip Word
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
+                  Skip Word →
                 </button>
               </div>
             </>
@@ -143,11 +110,11 @@ export default function MimicGame() {
         </div>
 
         {/* Tips */}
-        <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10">
-          <h3 className="text-white/80 font-medium mb-2 flex items-center gap-2">
-            <span>💡</span> Tips for Acting
+        <div className="mt-6 p-4 border-2 border-black bg-white">
+          <h3 className="text-black font-bold mb-2">
+            Tips for Acting
           </h3>
-          <ul className="text-white/50 text-sm space-y-1">
+          <ul className="text-gray-600 text-sm space-y-1">
             <li>• Use hand gestures and body language</li>
             <li>• Break complex terms into parts</li>
             <li>• No speaking, lip-syncing, or pointing at objects!</li>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 70" width="280" height="70">
+  <!-- Yellow Square Background -->
+  <rect x="0" y="5" width="60" height="60" fill="#E8C627"/>
+  
+  <!-- Compass Star -->
+  <g transform="translate(30, 35)">
+    <!-- Main 4-point star (vertical and horizontal) -->
+    <polygon points="0,-22 3,-6 0,-6 0,-22" fill="#3D3D3D"/>
+    <polygon points="0,-22 -3,-6 0,-6 0,-22" fill="#3D3D3D"/>
+    <polygon points="0,22 3,6 0,6 0,22" fill="#3D3D3D"/>
+    <polygon points="0,22 -3,6 0,6 0,22" fill="#3D3D3D"/>
+    <polygon points="-22,0 -6,3 -6,0 -22,0" fill="#3D3D3D"/>
+    <polygon points="-22,0 -6,-3 -6,0 -22,0" fill="#3D3D3D"/>
+    <polygon points="22,0 6,3 6,0 22,0" fill="#3D3D3D"/>
+    <polygon points="22,0 6,-3 6,0 22,0" fill="#3D3D3D"/>
+    
+    <!-- Diagonal points (smaller) -->
+    <polygon points="-14,-14 -5,-5 -3,-7 -14,-14" fill="#3D3D3D"/>
+    <polygon points="-14,-14 -7,-3 -5,-5 -14,-14" fill="#3D3D3D"/>
+    <polygon points="14,-14 5,-5 7,-3 14,-14" fill="#3D3D3D"/>
+    <polygon points="14,-14 3,-7 5,-5 14,-14" fill="#3D3D3D"/>
+    <polygon points="-14,14 -5,5 -7,3 -14,14" fill="#3D3D3D"/>
+    <polygon points="-14,14 -3,7 -5,5 -14,14" fill="#3D3D3D"/>
+    <polygon points="14,14 5,5 3,7 14,14" fill="#3D3D3D"/>
+    <polygon points="14,14 7,3 5,5 14,14" fill="#3D3D3D"/>
+    
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="4" fill="#3D3D3D"/>
+  </g>
+  
+  <!-- Text: Hospitality -->
+  <text x="75" y="28" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#3D3D3D">Hospitality</text>
+  
+  <!-- Text: Innovators -->
+  <text x="75" y="48" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#3D3D3D">Innovators</text>
+  
+  <!-- Text: Nexus -->
+  <text x="75" y="68" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#3D3D3D">Nexus</text>
+</svg>

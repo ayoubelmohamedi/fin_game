@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { techTrivia } from "@/data/gameData";
 import GameControls from "@/components/GameControls";
@@ -9,278 +9,196 @@ import Confetti from "@/components/Confetti";
 
 export default function TriviaGame() {
   const router = useRouter();
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(15);
-  const [shuffledQuestions] = useState(() =>
-    [...techTrivia].sort(() => Math.random() - 0.5)
-  );
 
-  const currentQuestion = shuffledQuestions[questionIndex];
-  const totalQuestions = shuffledQuestions.length;
+  const currentQuestion = techTrivia[currentIndex];
+  const totalQuestions = techTrivia.length;
+  const isLastQuestion = currentIndex >= totalQuestions - 1;
 
-  const handleNextQuestion = useCallback(() => {
-    if (questionIndex < totalQuestions - 1) {
-      setQuestionIndex((i) => i + 1);
-      setSelectedAnswer(null);
-      setShowResult(false);
-      setTimeLeft(15);
-    } else {
-      setGameOver(true);
+  const handleAnswer = (optionIndex: number) => {
+    if (answered) return;
+
+    setSelectedAnswer(optionIndex);
+    setAnswered(true);
+
+    if (optionIndex === currentQuestion.correct) {
+      setScore((prev) => prev + 1);
     }
-  }, [questionIndex, totalQuestions]);
+  };
 
-  // Timer
-  useEffect(() => {
-    if (showResult || gameOver) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          setShowResult(true);
-          return 0;
-        }
-        return t - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [questionIndex, showResult, gameOver]);
-
-  const handleAnswer = (index: number) => {
-    if (showResult) return;
-
-    setSelectedAnswer(index);
-    setShowResult(true);
-
-    if (index === currentQuestion.correct) {
-      setScore((s) => s + 1);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 100);
+  const nextQuestion = () => {
+    if (isLastQuestion) {
+      setShowResult(true);
+    } else {
+      setCurrentIndex((prev) => prev + 1);
+      setAnswered(false);
+      setSelectedAnswer(null);
     }
   };
 
   const handleReplay = () => {
+    setCurrentIndex(0);
     setScore(0);
-    setQuestionIndex(0);
+    setAnswered(false);
     setSelectedAnswer(null);
     setShowResult(false);
-    setGameOver(false);
-    setTimeLeft(15);
   };
 
-  if (gameOver) {
-    const percentage = Math.round((score / totalQuestions) * 100);
+  const getResultMessage = () => {
+    const percentage = (score / totalQuestions) * 100;
+    if (percentage === 100) return "Perfect Score!";
+    if (percentage >= 80) return "Excellent!";
+    if (percentage >= 60) return "Well Done!";
+    if (percentage >= 40) return "Good Try!";
+    return "Keep Learning!";
+  };
+
+  if (showResult) {
     return (
-      <div className="min-h-screen px-4 py-8 flex flex-col items-center justify-center">
-        <Confetti active={percentage >= 70} />
-
-        <div className="game-card p-8 text-center max-w-lg w-full">
-          <div className="text-6xl mb-4">
-            {percentage >= 80 ? "🧠" : percentage >= 60 ? "🎉" : "📚"}
+      <div className="min-h-screen px-4 py-12 flex flex-col items-center justify-center">
+        <Confetti active={score >= totalQuestions * 0.6} />
+        
+        <div className="text-center mb-8">
+          <div className="inline-block px-4 py-2 border-2 border-black bg-white text-xs font-bold tracking-widest mb-4">
+            QUIZ COMPLETE
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Quiz Complete!</h2>
-          <p className="text-white/60 mb-6">
-            You scored {score} out of {totalQuestions}
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-black mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {getResultMessage()}
+          </h1>
+        </div>
 
-          <div className="relative w-32 h-32 mx-auto mb-6">
-            <svg className="w-full h-full transform -rotate-90">
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="rgba(255,255,255,0.1)"
-                strokeWidth="8"
-                fill="none"
+        <div className="w-full max-w-md mb-8">
+          <div className="border-2 border-black bg-white p-8 text-center">
+            <div className="text-6xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {score}/{totalQuestions}
+            </div>
+            <div className="text-gray-600 mb-4">
+              {Math.round((score / totalQuestions) * 100)}% correct
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full h-3 border-2 border-black bg-white mb-6">
+              <div
+                className="h-full bg-black transition-all duration-500"
+                style={{ width: `${(score / totalQuestions) * 100}%` }}
               />
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="url(#trivia-gradient)"
-                strokeWidth="8"
-                fill="none"
-                strokeLinecap="round"
-                strokeDasharray={`${percentage * 3.52} 352`}
-              />
-              <defs>
-                <linearGradient
-                  id="trivia-gradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="0%"
-                >
-                  <stop offset="0%" stopColor="#8b5cf6" />
-                  <stop offset="100%" stopColor="#d946ef" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">{percentage}%</span>
             </div>
           </div>
-
-          <p className="text-white/60 mb-6">
-            {percentage >= 80
-              ? "Incredible! You're a tech & hospitality genius! 🌟"
-              : percentage >= 60
-              ? "Well done! You know your stuff!"
-              : "Keep learning! Technology is always evolving!"}
-          </p>
-
-          <GameControls
-            onReplay={handleReplay}
-            onBack={() => router.push("/")}
-            showSkip={false}
-          />
         </div>
+
+        <GameControls
+          onReplay={handleReplay}
+          onBack={() => router.push("/")}
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 flex flex-col items-center justify-center">
-      <Confetti active={showConfetti} />
-
+    <div className="min-h-screen px-4 py-12 flex flex-col items-center justify-center">
       {/* Game Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-300 text-sm mb-4">
-          <span>🧠</span>
-          <span>Quiz Challenge</span>
+        <div className="inline-block px-4 py-2 border-2 border-black bg-white text-xs font-bold tracking-widest mb-4">
+          TECH QUIZ
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           Tech Trivia
         </h1>
+        <p className="text-gray-600">
+          Test your technology knowledge!
+        </p>
       </div>
 
       {/* Progress & Score */}
-      <div className="flex items-center gap-6 mb-4">
-        <div className="text-white/60">
-          <span className="text-white font-bold">{questionIndex + 1}</span> /{" "}
-          {totalQuestions}
+      <div className="flex items-center gap-6 mb-6">
+        <div className="px-4 py-2 border-2 border-black bg-white">
+          <span className="text-gray-600 text-sm">Question </span>
+          <span className="font-bold text-black">{currentIndex + 1}/{totalQuestions}</span>
         </div>
-        <ScoreDisplay score={score} total={totalQuestions} />
+        <ScoreDisplay score={score} total={totalQuestions} label="Score" />
       </div>
 
-      {/* Timer */}
-      <div className="w-full max-w-lg mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-white/50 text-sm">Time remaining</span>
-          <span
-            className={`font-bold ${
-              timeLeft <= 5 ? "text-rose-400" : "text-white"
-            }`}
-          >
-            {timeLeft}s
-          </span>
-        </div>
-        <div className="timer-bar">
-          <div
-            className="timer-bar-fill"
-            style={{ width: `${(timeLeft / 15) * 100}%` }}
-          />
-        </div>
+      {/* Progress bar */}
+      <div className="w-full max-w-md h-2 border-2 border-black bg-white mb-8">
+        <div
+          className="h-full bg-black transition-all duration-300"
+          style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
+        />
       </div>
 
       {/* Question Card */}
-      <div className="w-full max-w-lg">
-        <div className="game-card p-6 mb-6">
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-4">
-            Question {questionIndex + 1}
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">
+      <div className="w-full max-w-md mb-8">
+        <div className="border-2 border-black bg-white p-6">
+          <p className="text-xl font-bold text-black text-center" style={{ fontFamily: "'Playfair Display', serif" }}>
             {currentQuestion.question}
-          </h2>
-
-          {/* Options */}
-          <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
-              let buttonStyle = "bg-white/5 border-white/10 hover:bg-white/10";
-
-              if (showResult) {
-                if (index === currentQuestion.correct) {
-                  buttonStyle =
-                    "bg-emerald-500/20 border-emerald-500/50 text-emerald-300";
-                } else if (index === selectedAnswer) {
-                  buttonStyle = "bg-rose-500/20 border-rose-500/50 text-rose-300";
-                } else {
-                  buttonStyle = "bg-white/5 border-white/10 opacity-50";
-                }
-              } else if (selectedAnswer === index) {
-                buttonStyle = "bg-violet-500/20 border-violet-500/50";
-              }
-
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(index)}
-                  disabled={showResult}
-                  className={`w-full p-4 rounded-xl border text-left transition-all ${buttonStyle}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 font-medium">
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    <span className="text-white">{option}</span>
-                    {showResult && index === currentQuestion.correct && (
-                      <svg
-                        className="w-5 h-5 text-emerald-400 ml-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    )}
-                    {showResult &&
-                      index === selectedAnswer &&
-                      index !== currentQuestion.correct && (
-                        <svg
-                          className="w-5 h-5 text-rose-400 ml-auto"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          </p>
         </div>
+      </div>
 
-        {/* Next Button */}
-        {showResult && (
-          <button
-            onClick={handleNextQuestion}
-            className="w-full btn-primary text-lg py-4"
-          >
-            {questionIndex < totalQuestions - 1 ? "Next Question" : "See Results"}
-          </button>
-        )}
+      {/* Options */}
+      <div className="w-full max-w-md space-y-3 mb-8">
+        {currentQuestion.options.map((option, index) => {
+          const isSelected = selectedAnswer === index;
+          const isCorrect = index === currentQuestion.correct;
+          const showCorrect = answered && isCorrect;
+          const showWrong = answered && isSelected && !isCorrect;
 
+          return (
+            <button
+              key={index}
+              onClick={() => handleAnswer(index)}
+              disabled={answered}
+              className={`w-full p-4 text-left border-2 transition-all font-medium ${
+                showCorrect
+                  ? "border-black bg-black text-white"
+                  : showWrong
+                  ? "border-gray-400 bg-gray-200 text-gray-600"
+                  : isSelected
+                  ? "border-black bg-black text-white"
+                  : "border-black bg-white text-black hover:bg-gray-100"
+              } ${answered ? "cursor-default" : "cursor-pointer"}`}
+            >
+              <span className="inline-flex items-center justify-center w-6 h-6 border-2 border-current mr-3 text-xs font-bold">
+                {String.fromCharCode(65 + index)}
+              </span>
+              {option}
+              {showCorrect && <span className="float-right">✓</span>}
+              {showWrong && <span className="float-right">✗</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Next button */}
+      {answered && (
+        <button onClick={nextQuestion} className="btn-primary text-lg px-8 py-4 mb-6">
+          {isLastQuestion ? "See Results" : "Next Question"} →
+        </button>
+      )}
+
+      {/* Tips */}
+      <div className="w-full max-w-md p-4 border-2 border-black bg-white">
+        <h3 className="text-black font-bold mb-2">
+          How to Play
+        </h3>
+        <ul className="text-gray-600 text-sm space-y-1">
+          <li>• Select the correct answer for each question</li>
+          <li>• Score points for each correct answer</li>
+          <li>• Try to get the highest score!</li>
+        </ul>
+      </div>
+
+      <div className="mt-6">
         <GameControls
           onReplay={handleReplay}
+          onSkip={nextQuestion}
+          skipLabel="Skip"
+          showSkip={!answered}
           onBack={() => router.push("/")}
-          showSkip={false}
         />
       </div>
     </div>

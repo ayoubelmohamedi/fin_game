@@ -1,202 +1,230 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { wheelItems, wheelChallenges } from "@/data/gameData";
 import GameControls from "@/components/GameControls";
-import Confetti from "@/components/Confetti";
 
 export default function WheelGame() {
   const router = useRouter();
-  const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [challenge, setChallenge] = useState<string | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const wheelRef = useRef<HTMLDivElement>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<string | null>(null);
+  const [challengesCompleted, setChallengesCompleted] = useState(0);
+  const wheelRef = useRef<SVGSVGElement>(null);
 
-  const segmentAngle = 360 / wheelItems.length;
+  const numSegments = wheelItems.length;
+  const segmentAngle = 360 / numSegments;
+
+  useEffect(() => {
+    if (!isSpinning && rotation > 0) {
+      // Normalize the rotation to 0-360
+      const normalizedRotation = rotation % 360;
+      // The pointer is at top (0 degrees), wheel rotates clockwise
+      // We need to find which segment is at the top after rotation
+      const pointerPosition = (360 - normalizedRotation + segmentAngle / 2) % 360;
+      const selectedIndex = Math.floor(pointerPosition / segmentAngle);
+      const selected = wheelItems[selectedIndex % numSegments];
+      setSelectedItem(selected.label);
+      
+      // Get random challenge from that category
+      const challenges = wheelChallenges[selected.label];
+      if (challenges && challenges.length > 0) {
+        const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+        setSelectedChallenge(randomChallenge);
+      }
+    }
+  }, [isSpinning, rotation, segmentAngle, numSegments]);
 
   const spinWheel = () => {
     if (isSpinning) return;
-
     setIsSpinning(true);
     setSelectedItem(null);
-    setChallenge(null);
+    setSelectedChallenge(null);
 
-    // Random spin between 5-10 full rotations plus random segment
-    const spins = 5 + Math.random() * 5;
-    const extraDegrees = Math.random() * 360;
-    const totalRotation = rotation + spins * 360 + extraDegrees;
+    const spinAmount = 1440 + Math.random() * 1080; // 4-7 full rotations
+    const newRotation = rotation + spinAmount;
+    setRotation(newRotation);
 
-    setRotation(totalRotation);
-
-    // Calculate which segment we landed on
     setTimeout(() => {
-      // The pointer is at the top (12 o'clock position)
-      // We need to figure out which segment is at the top after rotation
-      const normalizedRotation = totalRotation % 360;
-      // Since segments start at -90deg (top), and wheel rotates clockwise,
-      // we need to find which segment index is now at the top
-      const pointerAngle = (360 - normalizedRotation) % 360;
-      const segmentIndex = Math.floor(pointerAngle / segmentAngle) % wheelItems.length;
-      const item = wheelItems[segmentIndex];
-
-      setSelectedItem(item.label);
-      
-      // Get random challenge for this category
-      const challenges = wheelChallenges[item.label];
-      if (challenges) {
-        const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
-        setChallenge(randomChallenge);
-      }
-
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 100);
       setIsSpinning(false);
-    }, 3000);
+    }, 4000);
+  };
+
+  const handleComplete = () => {
+    setChallengesCompleted((c) => c + 1);
+    setSelectedItem(null);
+    setSelectedChallenge(null);
   };
 
   const handleReplay = () => {
-    setSelectedItem(null);
-    setChallenge(null);
     setRotation(0);
+    setSelectedItem(null);
+    setSelectedChallenge(null);
+    setChallengesCompleted(0);
+    setIsSpinning(false);
   };
 
-  return (
-    <div className="min-h-screen px-4 py-8 flex flex-col items-center justify-center">
-      <Confetti active={showConfetti} />
+  // Colors for wheel segments - monochrome palette
+  const monoColors = [
+    "#18181b", // black
+    "#fafafa", // white
+    "#71717a", // gray
+    "#fafafa", // white
+    "#18181b", // black
+    "#d4d4d8", // light gray
+    "#18181b", // black
+    "#fafafa", // white
+    "#71717a", // gray
+    "#fafafa", // white
+  ];
 
+  return (
+    <div className="min-h-screen px-4 py-12 flex flex-col items-center justify-center">
       {/* Game Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-sm mb-4">
-          <span>🎡</span>
-          <span>Digital Wheel</span>
+        <div className="inline-block px-4 py-2 border-2 border-black bg-white text-xs font-bold tracking-widest mb-4">
+          SPIN & WIN
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           Spin & Challenge
         </h1>
-        <p className="text-white/60">
-          What will fate decide for you?
+        <p className="text-gray-600">
+          Spin the wheel and complete the challenge!
         </p>
       </div>
+
+      {/* Completed counter */}
+      {challengesCompleted > 0 && (
+        <div className="mb-6 px-4 py-2 border-2 border-black bg-black text-white font-bold">
+          {challengesCompleted} challenge{challengesCompleted > 1 ? "s" : ""} completed!
+        </div>
+      )}
 
       {/* Wheel Container */}
       <div className="relative mb-8">
         {/* Pointer */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-10">
-          <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[25px] border-t-white drop-shadow-lg"></div>
+          <div className="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[25px] border-l-transparent border-r-transparent border-t-black"></div>
         </div>
 
         {/* Wheel */}
-        <div
+        <svg
           ref={wheelRef}
-          className="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full border-4 border-white/20 shadow-2xl overflow-hidden"
+          width="320"
+          height="320"
+          viewBox="0 0 320 320"
+          className="drop-shadow-xl"
           style={{
             transform: `rotate(${rotation}deg)`,
-            transition: isSpinning ? "transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)" : "none",
+            transition: isSpinning ? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)" : "none",
           }}
         >
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            {wheelItems.map((item, index) => {
-              const startAngle = index * segmentAngle - 90;
-              const endAngle = (index + 1) * segmentAngle - 90;
-              const midAngle = (startAngle + endAngle) / 2;
-              
-              // Calculate SVG path for pie segment
-              const radius = 50;
-              const startRad = (startAngle * Math.PI) / 180;
-              const endRad = (endAngle * Math.PI) / 180;
-              
-              const x1 = 50 + radius * Math.cos(startRad);
-              const y1 = 50 + radius * Math.sin(startRad);
-              const x2 = 50 + radius * Math.cos(endRad);
-              const y2 = 50 + radius * Math.sin(endRad);
-              
-              const largeArcFlag = segmentAngle > 180 ? 1 : 0;
-              
-              const pathD = `M 50 50 L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-
-              // Text position - along the middle of the segment, pointing outward
-              const textRadius = 32;
-              const midRad = (midAngle * Math.PI) / 180;
-              const textX = 50 + textRadius * Math.cos(midRad);
-              const textY = 50 + textRadius * Math.sin(midRad);
-
-              return (
-                <g key={index}>
-                  <path d={pathD} fill={item.color} stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
-                  <text
-                    x={textX}
-                    y={textY}
-                    fill="white"
-                    fontSize="4"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    transform={`rotate(${midAngle + 90}, ${textX}, ${textY})`}
-                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
-                  >
-                    {item.label}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+          {/* Outer ring */}
+          <circle cx="160" cy="160" r="158" fill="none" stroke="#18181b" strokeWidth="4" />
           
+          {wheelItems.map((item, index) => {
+            const startAngle = index * segmentAngle - 90;
+            const endAngle = (index + 1) * segmentAngle - 90;
+            const startRad = (startAngle * Math.PI) / 180;
+            const endRad = (endAngle * Math.PI) / 180;
+            const x1 = 160 + 150 * Math.cos(startRad);
+            const y1 = 160 + 150 * Math.sin(startRad);
+            const x2 = 160 + 150 * Math.cos(endRad);
+            const y2 = 160 + 150 * Math.sin(endRad);
+            const largeArcFlag = segmentAngle > 180 ? 1 : 0;
+
+            // Text positioning
+            const midAngle = (startAngle + endAngle) / 2;
+            const midRad = (midAngle * Math.PI) / 180;
+            const textRadius = 100;
+            const textX = 160 + textRadius * Math.cos(midRad);
+            const textY = 160 + textRadius * Math.sin(midRad);
+
+            // Determine colors
+            const bgColor = monoColors[index % monoColors.length];
+            const textColor = bgColor === "#18181b" || bgColor === "#71717a" ? "#fafafa" : "#18181b";
+
+            return (
+              <g key={index}>
+                <path
+                  d={`M 160 160 L ${x1} ${y1} A 150 150 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+                  fill={bgColor}
+                  stroke="#18181b"
+                  strokeWidth="2"
+                />
+                <text
+                  x={textX}
+                  y={textY}
+                  fill={textColor}
+                  fontSize="11"
+                  fontWeight="600"
+                  fontFamily="'DM Sans', sans-serif"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  transform={`rotate(${midAngle + 90}, ${textX}, ${textY})`}
+                >
+                  {item.label.length > 12 ? item.label.substring(0, 10) + "..." : item.label}
+                </text>
+              </g>
+            );
+          })}
           {/* Center circle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-white/20 flex items-center justify-center shadow-inner">
-            <span className="text-2xl">🎡</span>
-          </div>
-        </div>
+          <circle cx="160" cy="160" r="25" fill="#18181b" stroke="#fafafa" strokeWidth="3" />
+          <text x="160" y="160" fill="#fafafa" fontSize="10" fontWeight="bold" textAnchor="middle" dominantBaseline="middle">
+            SPIN
+          </text>
+        </svg>
       </div>
 
       {/* Spin Button */}
       <button
         onClick={spinWheel}
         disabled={isSpinning}
-        className={`btn-primary text-lg px-10 py-4 mb-8 ${
-          isSpinning ? "opacity-50 cursor-not-allowed" : "pulse"
-        }`}
+        className={`btn-primary text-lg px-8 py-4 mb-6 ${isSpinning ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        {isSpinning ? "Spinning..." : "Spin the Wheel!"}
+        {isSpinning ? "Spinning..." : "Spin the Wheel"}
       </button>
 
-      {/* Result */}
-      {selectedItem && challenge && (
-        <div className="w-full max-w-md game-card p-6 text-center animate-fade-in">
-          <div className="text-3xl mb-2">{selectedItem}</div>
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-3">
-            Your Challenge
+      {/* Selected Challenge */}
+      {selectedChallenge && !isSpinning && (
+        <div className="w-full max-w-md mb-6">
+          <div className="border-2 border-black bg-white p-6 text-center">
+            <div className="text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">
+              Category: {selectedItem}
+            </div>
+            <div className="text-xs font-bold tracking-widest uppercase text-gray-500 mb-3">
+              Your Challenge
+            </div>
+            <p className="text-xl font-bold text-black mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {selectedChallenge}
+            </p>
+            <button onClick={handleComplete} className="btn-secondary">
+              ✓ Challenge Complete!
+            </button>
           </div>
-          <p className="text-lg text-white font-medium mb-4">{challenge}</p>
-          <button
-            onClick={spinWheel}
-            disabled={isSpinning}
-            className="flex items-center justify-center gap-2 mx-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            Spin Again
-          </button>
         </div>
       )}
 
+      {/* Tips */}
+      <div className="w-full max-w-md p-4 border-2 border-black bg-white mb-6">
+        <h3 className="text-black font-bold mb-2">
+          How to Play
+        </h3>
+        <ul className="text-gray-600 text-sm space-y-1">
+          <li>• Spin the wheel to get a random category</li>
+          <li>• Complete the challenge with your team</li>
+          <li>• Have fun and be creative!</li>
+        </ul>
+      </div>
+
       <GameControls
         onReplay={handleReplay}
+        onSkip={!isSpinning ? spinWheel : undefined}
+        skipLabel="Spin Again"
+        showSkip={!!selectedChallenge && !isSpinning}
         onBack={() => router.push("/")}
-        showSkip={false}
       />
     </div>
   );

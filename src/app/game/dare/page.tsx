@@ -42,25 +42,24 @@ export default function DareGame() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen px-4 py-12 flex flex-col items-center justify-center">
       {/* Game Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 text-sm mb-4">
-          <span>🎲</span>
-          <span>Fun Challenges</span>
+        <div className="inline-block px-4 py-2 border-2 border-black bg-white text-xs font-bold tracking-widest mb-4">
+          FUN CHALLENGES
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           Dare to Fail
         </h1>
-        <p className="text-white/60">
+        <p className="text-gray-600">
           Draw a card and complete the challenge!
         </p>
       </div>
 
       {/* Dares completed counter */}
       {daresCompleted > 0 && (
-        <div className="mb-6 px-4 py-2 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300">
-          🏆 {daresCompleted} dare{daresCompleted > 1 ? "s" : ""} completed!
+        <div className="mb-6 px-4 py-2 border-2 border-black bg-black text-white font-bold">
+          {daresCompleted} dare{daresCompleted > 1 ? "s" : ""} completed!
         </div>
       )}
 
@@ -74,44 +73,35 @@ export default function DareGame() {
             <div className="card-flip-inner relative w-full h-full" style={{ transformStyle: "preserve-3d", transition: "transform 0.6s" }}>
               {/* Card Back */}
               <div
-                className="absolute inset-0 rounded-2xl cursor-pointer flex flex-col items-center justify-center p-8 border border-white/10"
+                className="absolute inset-0 cursor-pointer flex flex-col items-center justify-center p-8 border-2 border-black bg-white"
                 onClick={!currentDare ? drawCard : undefined}
                 style={{
-                  background: "linear-gradient(135deg, #1a1a3e 0%, #2d1f3d 100%)",
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                 }}
               >
-                <div className="text-6xl mb-4">🎲</div>
-                <div className="text-2xl font-bold text-white mb-2">
+                <div className="text-6xl mb-4">■</div>
+                <div className="text-2xl font-bold text-black mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Dare Card
                 </div>
-                <p className="text-white/60 text-center">
+                <p className="text-gray-600 text-center">
                   {currentDare ? "Flip to see your dare!" : "Tap to draw a card"}
                 </p>
 
                 {/* Card pattern decoration */}
-                <div className="absolute inset-4 border-2 border-white/10 rounded-xl pointer-events-none"></div>
-                <div className="absolute top-8 left-8 text-3xl opacity-20">
-                  🎭
-                </div>
-                <div className="absolute bottom-8 right-8 text-3xl opacity-20">
-                  🎭
-                </div>
+                <div className="absolute inset-4 border-2 border-gray-200 pointer-events-none"></div>
               </div>
 
               {/* Card Front (Dare content) */}
               <div
-                className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center p-8 border border-white/10"
+                className="absolute inset-0 flex flex-col items-center justify-center p-8 border-2 border-black bg-black text-white"
                 style={{
-                  background: "linear-gradient(135deg, #2d1f3d 0%, #1a1a3e 100%)",
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
                   transform: "rotateY(180deg)",
                 }}
               >
-                <div className="text-4xl mb-4">🎬</div>
-                <div className="text-xs text-white/40 uppercase tracking-wider mb-2">
+                <div className="text-xs font-bold tracking-widest uppercase mb-4 text-gray-400">
                   Your Dare
                 </div>
                 <p className="text-xl text-white text-center font-medium mb-6 leading-relaxed">
@@ -119,22 +109,9 @@ export default function DareGame() {
                 </p>
                 <button
                   onClick={handleComplete}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-medium hover:from-rose-600 hover:to-pink-700 transition-all shadow-lg hover:shadow-rose-500/30"
+                  className="px-6 py-3 border-2 border-white bg-white text-black font-medium hover:bg-black hover:text-white transition-all"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  Dare Complete!
+                  ✓ Dare Complete!
                 </button>
               </div>
             </div>
@@ -150,11 +127,11 @@ export default function DareGame() {
       )}
 
       {/* Tips */}
-      <div className="w-full max-w-md p-4 rounded-xl bg-white/5 border border-white/10 mb-6">
-        <h3 className="text-white/80 font-medium mb-2 flex items-center gap-2">
-          <span>📋</span> How to Play
+      <div className="w-full max-w-md p-4 border-2 border-black bg-white mb-6">
+        <h3 className="text-black font-bold mb-2">
+          How to Play
         </h3>
-        <ul className="text-white/50 text-sm space-y-1">
+        <ul className="text-gray-600 text-sm space-y-1">
           <li>• Failed a mini-challenge? Draw a dare!</li>
           <li>• Complete the dare with enthusiasm</li>
           <li>• Have fun and don&apos;t take it too seriously!</li>
